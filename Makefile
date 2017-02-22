@@ -37,29 +37,29 @@ MANINSTALLDIR = /usr/local/share/man/man3
 DELCMD = rm
 
 ifeq ($(shell uname), Darwin)
-all: $(LIBDIR)/mm.o \
-	 $(LIBDIR)/libmm.a \
-	 $(LIBDIR)/libmm.1.dylib \
+all: mm.o \
+	 libmm.a \
+	 libmm.1.dylib \
 	 test
 else
-all: $(LIBDIR)/mm.o \
-	 $(LIBDIR)/libmm.a \
-	 $(LIBDIR)/libmm.so.1 \
+all: mm.o \
+	 libmm.a \
+	 libmm.so.1 \
 	 test
 endif
 
-$(LIBDIR)/mm.o: $(SRCDIR)/mm.c $(SRCDIR)/mm.h
-	$(CC) $(CFLAGS_C) $(CFLAGS_C_COMPILE) $< -o $@
+mm.o: $(SRCDIR)/mm.c $(SRCDIR)/mm.h
+	$(CC) $(CFLAGS_C) $(CFLAGS_C_COMPILE) $< -o $(LIBDIR)/$@
 
-$(LIBDIR)/libmm.a: $(LIBDIR)/mm.o
-	ar cr $@ $<
+libmm.a: $(LIBDIR)/mm.o
+	ar cr $(LIBDIR)/$@ $<
 
 ifeq ($(shell uname), Darwin)
-$(LIBDIR)/libmm.1.dylib: $(LIBDIR)/mm.o
-	ld -dylib -macosx_version_min 10.12 -o $@ -lc $<
+libmm.1.dylib: $(LIBDIR)/mm.o
+	ld -dylib -macosx_version_min 10.12 -o $(LIBDIR)/$@ -lc $<
 else
-$(LIBDIR)/libmm.so.1: $(LIBDIR)/mm.o
-	ld -shared -soname $@ -o $@ -lc $<
+libmm.so.1: $(LIBDIR)/mm.o
+	ld -shared -soname $@ -o $(LIBDIR)/$@ -lc $<
 endif
 
 test: $(TESTDIR)/testmm.c $(LIBDIR)/libmm.a
